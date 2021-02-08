@@ -1,6 +1,6 @@
-﻿# Api Security In Action
+﻿# Api Security In Action: Chapter 2
 
-This project is a .net implementation for code published by Neil Maiden.
+Using ASP.net core 5 and EF core
 
 ## Database In memory for EF Core
 
