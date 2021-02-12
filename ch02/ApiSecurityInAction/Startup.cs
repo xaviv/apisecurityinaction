@@ -31,6 +31,10 @@ namespace ApiSecurityInAction
 			services.AddSwaggerGen(c =>
 			{
 				c.SwaggerDoc("v1", new OpenApiInfo { Title = "ApiSecurityInAction", Version = "v1" });
+				// Set the comments path for the Swagger JSON and UI.
+				var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+				var xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, xmlFile);
+				c.IncludeXmlComments(xmlPath);
 			});
 			services.AddDbContext<NatterContext>(options => options.UseInMemoryDatabase("NatterDB"));
 			services.AddControllers();

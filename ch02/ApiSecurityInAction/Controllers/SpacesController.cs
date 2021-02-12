@@ -23,8 +23,13 @@ namespace ApiSecurityInAction.Controllers
 
 		// POST: api/Spaces
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+		/// <summary>
+		/// Creates a new space
+		/// </summary>
+		/// <param name="space"></param>
+		/// <returns></returns>
 		[HttpPost]
-		public async Task<ActionResult<Space>> CreateSpace(Space space)
+		public async Task<ActionResult<Space>> CreateSpace([FromRoute] Space space)
 		{
 			if (space.Name.Length > 255) return BadRequest("Space name too long");
 			var match = Regex.Match(space.Owner, @"[a-zA-Z][a-zA-Z0-9]{1,29}", RegexOptions.IgnoreCase);
@@ -45,11 +50,11 @@ namespace ApiSecurityInAction.Controllers
 		/// <summary>
 		/// Read an specific message
 		/// </summary>
-		/// <param name="spaceId"></param>
-		/// <param name="messageId"></param>
+		/// <param name="spaceId">Space identificator</param>
+		/// <param name="messageId">Message identificator</param>
 		/// <returns></returns>
 		[HttpGet("{spaceId}/Messages/{messageId}")]
-		public async Task<ActionResult<Message>> ReadMessage(int spaceId, int messageId)
+		public async Task<ActionResult<Message>> ReadMessage([FromRoute] int spaceId, [FromRoute] int messageId)
 		{
 			var message = await _context.Messages.FindAsync(spaceId, messageId);
 			if (message == null) return NotFound("Message not found");
@@ -62,13 +67,17 @@ namespace ApiSecurityInAction.Controllers
 		/// <param name="spaceId"></param>
 		/// <returns></returns>
 		[HttpGet("{spaceId}/Messages")]
-		public async Task<ActionResult<IEnumerable<Message>>> FindMessages(int spaceId)
+		public async Task<ActionResult<IEnumerable<Message>>> FindMessages([FromRoute]int spaceId)
 		{
 			var messages =  _context.Messages.Where(m => m.SpaceId == spaceId && m.Time >= DateTime.Now.AddDays(-1));
 			return await messages.ToListAsync();
 		}
 
-		// Adding this just for testing purposes. Not found in the book.
+		// Added just for testing purposes. Not found in the book.
+		/// <summary>
+		/// Return a list of all possible spaces
+		/// </summary>
+		/// <returns></returns>
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<Space>>> GetSpaces()
 		{
