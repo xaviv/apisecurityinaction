@@ -1,5 +1,8 @@
+using ApiSecurityInAction.Auth;
 using ApiSecurityInAction.ORM;
 using ApiSecurityInAction.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -56,7 +59,11 @@ namespace ApiSecurityInAction
 				.AddRoleManager<RoleManager<IdentityRole>>()
 				.AddDefaultTokenProviders();
 
-			services.AddTransient<UserValidatorService>(); 
+			services.AddTransient<UserValidatorService>();
+
+			services.AddAuthentication().AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", options => { });
+
+			services.AddAuthorization(options => options.AddPolicy("BasicAuthentication", new AuthorizationPolicyBuilder("BasicAuthentication").RequireAuthenticatedUser().Build()));
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

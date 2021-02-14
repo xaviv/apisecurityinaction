@@ -29,3 +29,16 @@ Again, using an ORM prevents from this kind of failures:
 
 XSS exploit (file Resources/xss.html): Modified to use https, the right port, and api at the URL.
 This exploit cannot be used with ASP.net CORE, as it does not accept text/plain by default
+
+## Chapter 3:
+
+Check unauthorized access when creating space:
+`curl -i -u demo:Password.123 -d "{\"name\": \"test space\", \"owner\": \"demo\"}" -H  "Content-Type: application/json" https://localhost:44364/api/Spaces`
+
+Note book does not wire authenticate process at CreateSpace. Just remove [BasicAuth] from CreateSpace to check owner validation
+
+Now create user demo:
+`curl -i -u admin:Admin.1234 -d "{\"username\": \"demo\", \"password\": \"Password.123\"}" -H  "Content-Type: application/json" https://localhost:44364/api/Users`
+
+And create space using the new user:
+`curl -i -u demo:Password.123 -d "{\"name\": \"test space\", \"owner\": \"demo\"}" -H  "Content-Type: application/json" https://localhost:44364/api/Spaces`

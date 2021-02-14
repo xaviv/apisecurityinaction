@@ -1,4 +1,6 @@
-﻿using ApiSecurityInAction.ORM;
+﻿using ApiSecurityInAction.Auth;
+using ApiSecurityInAction.ORM;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -27,6 +29,7 @@ namespace ApiSecurityInAction.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
+        [BasicAuth]
         public async Task<ActionResult<IdentityResult>> RegisterUser([FromBody] UserDto user)
 		{
             return await userManager.CreateAsync(new IdentityUser(user.UserName), user.Password);

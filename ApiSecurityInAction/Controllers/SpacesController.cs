@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using ApiSecurityInAction.ORM;
 using System.Text.RegularExpressions;
 using ApiSecurityInAction.Services;
+using ApiSecurityInAction.Auth;
 
 namespace ApiSecurityInAction.Controllers
 {
@@ -32,11 +33,15 @@ namespace ApiSecurityInAction.Controllers
 		/// <param name="space"></param>
 		/// <returns></returns>
 		[HttpPost]
+		[BasicAuth]
 		public async Task<ActionResult<Space>> CreateSpace([FromBody] Space space)
 		{
 			if (space.Name.Length > 255) return BadRequest("Space name too long");
 
 			if (!_userValidatorService.Validate(space.Owner)) return BadRequest("Invalid username");
+
+			// chapter 3: Check owner equals identity
+			if (!space.Owner.Equals(Request.HttpContext.User.Identity.Name)) return BadRequest("Owner must match authenticated user");
 
 			//transactions are not supported at inmemory database
 			//using var transaction = _context.Database.BeginTransaction();
@@ -63,6 +68,8 @@ namespace ApiSecurityInAction.Controllers
 			if (message == null) return NotFound("Message not found");
 			return message;
 		}
+
+		// TODO: Missing post create Message & check author with authenticated user name
 
 		/// <summary>
 		/// Find messages in last 24h
