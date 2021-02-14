@@ -11,7 +11,12 @@ Database is populated after building the host at Main using PrepareDatabase exte
 
 Note web.config file is not added by default, and it is required to remove response headers.
 
-## Attacks:
+## ASP.net core identity
+
+As EF framework is not used because of Database in memory, custom User, Role and Password stores are needed and explicit User and Role managers need to be declared at Startup.
+Book code uses SCrypt as password hasher. By default, Core Identity uses PBKDF2 algorithm with HMAC-SHA256, 128-bit salt, 256-bit subkey and 10k iterations. No need to change it.
+
+## Chapter 2 attacks:
 
 Because of using EF core as ORM, SQL injection attacks are avoided, so this does not return a 500 response code as book says:
 `curl -i -d "{\"name\": \"test'space\", \"owner\": \"demo\"}" -H  "Content-Type: application/json" https://localhost:44364/api/Spaces`

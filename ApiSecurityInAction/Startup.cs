@@ -1,7 +1,9 @@
 using ApiSecurityInAction.ORM;
+using ApiSecurityInAction.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -38,6 +40,23 @@ namespace ApiSecurityInAction
 			});
 			services.AddDbContext<NatterContext>(options => options.UseInMemoryDatabase("NatterDB"));
 			services.AddControllers();
+
+			// The book uses Scrypt to manage passwords. Asp.net core provides Identity services instead
+			services.Configure<IdentityOptions>(options =>
+			{
+				options.Password.RequiredLength = 8; // To match book settings
+			});
+
+			// As we are not using EF framework, custom user and role stores are needed
+			services.AddIdentity<IdentityUser, IdentityRole>()
+				.AddUserStore<UserStoreService>()
+				.AddUserManager<UserManager<IdentityUser>>()
+				.AddUserValidator<UserValidatorService>()
+				.AddRoleStore<UserStoreService>()
+				.AddRoleManager<RoleManager<IdentityRole>>()
+				.AddDefaultTokenProviders();
+
+			services.AddTransient<UserValidatorService>(); 
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -64,6 +83,8 @@ namespace ApiSecurityInAction
 			app.UseHttpsRedirection();
 
 			app.UseRouting();
+
+			app.UseAuthentication();
 
 			app.UseAuthorization();
 

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ApiSecurityInAction.ORM;
 using System.Text.RegularExpressions;
+using ApiSecurityInAction.Services;
 
 namespace ApiSecurityInAction.Controllers
 {
@@ -15,10 +16,12 @@ namespace ApiSecurityInAction.Controllers
 	public class SpacesController : ControllerBase
 	{
 		private readonly NatterContext _context;
+		private readonly UserValidatorService _userValidatorService;
 
-		public SpacesController(NatterContext context)
+		public SpacesController(NatterContext context, UserValidatorService userValidatorService )
 		{
 			_context = context;
+			_userValidatorService = userValidatorService;
 		}
 
 		// POST: api/Spaces
@@ -29,11 +32,11 @@ namespace ApiSecurityInAction.Controllers
 		/// <param name="space"></param>
 		/// <returns></returns>
 		[HttpPost]
-		public async Task<ActionResult<Space>> CreateSpace([FromRoute] Space space)
+		public async Task<ActionResult<Space>> CreateSpace([FromBody] Space space)
 		{
 			if (space.Name.Length > 255) return BadRequest("Space name too long");
-			var match = Regex.Match(space.Owner, @"[a-zA-Z][a-zA-Z0-9]{1,29}", RegexOptions.IgnoreCase);
-			if (!match.Success) return BadRequest("Invalid username");
+
+			if (!_userValidatorService.Validate(space.Owner)) return BadRequest("Invalid username");
 
 			//transactions are not supported at inmemory database
 			//using var transaction = _context.Database.BeginTransaction();

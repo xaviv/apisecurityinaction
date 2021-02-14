@@ -32,6 +32,19 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:ApiSecurityInAction.Controllers.UsersController.RegisterUser(ApiSecurityInAction.ORM.UserDto)">
+            <summary>
+            Create a user
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSecurityInAction.Controllers.UsersController.GetUser(System.String)">
+            <summary>
+            Returns a user
+            </summary>
+            <param name="userName">User name</param>
+            <returns></returns>
+        </member>
         <member name="P:ApiSecurityInAction.ORM.Space.SpaceId">
             <summary>
             Id of new space
