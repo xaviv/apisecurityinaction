@@ -1,3 +1,4 @@
+using ApiSecurityInAction.Audit;
 using ApiSecurityInAction.Auth;
 using ApiSecurityInAction.ORM;
 using ApiSecurityInAction.Services;
@@ -5,6 +6,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -94,6 +96,9 @@ namespace ApiSecurityInAction
 			app.UseAuthentication();
 
 			app.UseAuthorization();
+
+			// Custom middleware to provide audit trail
+			app.UseMiddleware<AuditMiddleware>();
 
 			app.UseEndpoints(endpoints =>
 			{

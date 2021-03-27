@@ -13,11 +13,13 @@ namespace ApiSecurityInAction.ORM
 		public DbSet<Space> Spaces { get; set; }
 		public DbSet<Message> Messages { get; set; }
 		public DbSet<IdentityUser> Users { get; set; }
+		public DbSet<AuditItem> AuditLog { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			// Define aggregated primary key
 			modelBuilder.Entity<Message>().HasKey(k => new { k.SpaceId, k.MessageId });
+			modelBuilder.Entity<AuditItem>().HasKey(k => new { k.AuditId, k.AuditTime });
 		}
 	}
 }
