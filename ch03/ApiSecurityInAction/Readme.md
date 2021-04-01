@@ -44,3 +44,26 @@ whereas:
 
 Add member:
 `curl -i -X POST -u admin:Admin.1234 -H "Content-Type: application/json" -d "{\"userId\": \"demo\", \"perms\":\"r\", \"spaceId\": 1}" https://localhost:44364/api/spaces/1/members`
+
+## Avoiding privilege escalation attacks:
+
+Create users:
+`curl -i -d "{\"username\": \"demo2\", \"password\": \"Password.123\"}" -H  "Content-Type: application/json" https://localhost:44364/api/Users`
+`curl -i -d "{\"username\": \"evildemo2\", \"password\": \"Password.123\"}" -H  "Content-Type: application/json" https://localhost:44364/api/Users`
+
+Create space for demo:
+`curl -i -u demo:Password.123 -d "{\"name\": \"test space\", \"owner\": \"demo\"}" -H  "Content-Type: application/json" https://localhost:44364/api/Spaces`
+
+Add member demo2 with read permissions:
+`curl -i -X POST -u demo:Password.123 -H "Content-Type: application/json" -d "{\"userId\": \"demo2\", \"perms\":\"r\", \"spaceId\": 2}" https://localhost:44364/api/spaces/2/members`
+
+Post a message using demo user (will create message number 2):
+`curl -i -X POST -u demo:Password.123 -H "Content-Type: application/json" -d "{\"author\": \"demo\", \"text\":\"test message\", \"spaceId\": 2}" https://localhost:44364/api/spaces/2/messages`
+
+Use demo2 (a read-only user) to assign permissions to evildemo2:
+`curl -i -X POST -u demo2:Password.123 -H "Content-Type: application/json" -d "{\"userId\": \"evildemo2\", \"perms\":\"rwd\", \"spaceId\": 2}" https://localhost:44364/api/spaces/2/members`
+
+Now evildemo2 has full permissions to space 2, including deleting messages (privilege escalation happened)
+`curl -i -X DELETE -u evildemo2:Password.123 https://localhost:44364/api/spaces/2/messages/2`
+
+To fix this vulnerability, just add all policies to SpacesController.AddMember method (comment out Authorize aspects)

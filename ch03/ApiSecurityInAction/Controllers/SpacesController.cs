@@ -82,18 +82,14 @@ namespace ApiSecurityInAction.Controllers
 		[HttpPost("{spaceId}/Messages")]
 		[BasicAuth]
 		[Authorize(Policy = "RequireWritePermission")]
-		public async Task<ActionResult<Message>> PostMessage(int spaceId, String author, String text)
+		public async Task<ActionResult<Message>> PostMessage([FromRoute] int spaceId, [FromBody] Message message)
 		{
-			if (!_userValidatorService.Validate(author)) return BadRequest("Invalid username");
-			if (!author.Equals(Request.HttpContext.User.Identity.Name)) return BadRequest("Author must match authenticated user");
-			var message = new Message()
-			{
-				SpaceId = spaceId,
-				MessageId = await _context.Messages.MaxAsync(m => m.MessageId) + 1,
-				Author = author,
-				Time = DateTime.Now,
-				Text = text
-			};
+			if (!_userValidatorService.Validate(message.Author)) return BadRequest("Invalid username");
+			if (!message.Author.Equals(Request.HttpContext.User.Identity.Name)) return BadRequest("Author must match authenticated user");
+			message.SpaceId = spaceId;
+			message.MessageId = await _context.Messages.MaxAsync(m => m.MessageId) + 1;
+			message.Time = DateTime.Now;
+
 			_context.Messages.Add(message);
 			await _context.SaveChangesAsync();
 			return CreatedAtAction("PostMessage", new { spaceId = message.SpaceId, messageId = message.MessageId }, message);
@@ -108,6 +104,9 @@ namespace ApiSecurityInAction.Controllers
 		[HttpPost("{spaceId}/Members")]
 		[BasicAuth]
 		[Authorize(Policy = "RequireReadPermission")]
+		// Comment out to avoid privilege escalation
+		//[Authorize(Policy = "RequireWritePermission")]
+		//[Authorize(Policy = "RequireDeletePermission")]
 		public async Task<ActionResult<Permission>> AddMember([FromRoute] int spaceId, [FromBody] Permission perm)
 		{
 			var permRegex = new Regex(@"r?w?d?");
