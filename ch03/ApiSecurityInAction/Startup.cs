@@ -65,7 +65,15 @@ namespace ApiSecurityInAction
 
 			services.AddAuthentication().AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", options => { });
 
-			services.AddAuthorization(options => options.AddPolicy("BasicAuthentication", new AuthorizationPolicyBuilder("BasicAuthentication").RequireAuthenticatedUser().Build()));
+			services.AddAuthorization(options =>
+			{
+				options.AddPolicy("BasicAuthentication", new AuthorizationPolicyBuilder("BasicAuthentication").RequireAuthenticatedUser().Build());
+				options.AddPolicy("RequireWritePermission", policy => policy.Requirements.Add(new RequirePermission(Permissions.Write)));
+				options.AddPolicy("RequireReadPermission", policy => policy.Requirements.Add(new RequirePermission(Permissions.Read)));
+				options.AddPolicy("RequireDeletePermission", policy => policy.Requirements.Add(new RequirePermission(Permissions.Delete)));
+			});
+
+			services.AddScoped<IAuthorizationHandler, RequirePermissionHandler>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

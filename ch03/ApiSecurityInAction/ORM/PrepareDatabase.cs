@@ -21,6 +21,8 @@ namespace ApiSecurityInAction.ORM
 					context.Spaces.Add(space1);
 					var message1 = new Message() { SpaceId = 1, MessageId = 1, Author = "Author1", Text = "Message text test", Time = DateTime.Now };
 					context.Messages.Add(message1);
+					var permissions1 = new Permission() { SpaceId = 1, UserId = "admin", Perms = "rwd" };
+					context.Permissions.Add(permissions1);
 					var auditEntry = new AuditItem() { AuditId = 1, Method = "API Startup", UserId = "admin", AuditTime = DateTime.Now };
 					context.AuditLog.Add(auditEntry);
 					context.SaveChanges();

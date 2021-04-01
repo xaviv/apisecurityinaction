@@ -24,13 +24,8 @@ namespace ApiSecurityInAction.Services
 		#region IUserStore
 		public async Task<IdentityResult> CreateAsync(IdentityUser user, CancellationToken cancellationToken)
 		{
-			try
-			{
-				_context.Users.Add(user);
-				var success = await _context.SaveChangesAsync() > 0;
-				return success ? IdentityResult.Success : IdentityResult.Failed();
-			}
-			catch (Exception) { return IdentityResult.Failed(); }
+			var u = await ((IUserStore<IdentityUser>)this).FindByNameAsync(user.UserName, cancellationToken);
+			return u != null ? IdentityResult.Success : IdentityResult.Failed();
 		}
 
 		public Task<IdentityResult> DeleteAsync(IdentityUser user, CancellationToken cancellationToken)
@@ -106,7 +101,7 @@ namespace ApiSecurityInAction.Services
 
 		public async Task<IdentityResult> UpdateAsync(IdentityUser user, CancellationToken cancellationToken)
 		{
-			var r = await _context.SaveChangesAsync(cancellationToken)>0;
+			var r = await _context.SaveChangesAsync(cancellationToken) > 0;
 			if (r) return IdentityResult.Success;
 			return IdentityResult.Failed();
 		}

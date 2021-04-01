@@ -35,3 +35,12 @@ And create space using the new user:
 
 Dump logs:
 `curl -i https://localhost:44364/api/logs`
+
+Attempt to read a message from other space:
+`curl -i -u demo:Password.123 https://localhost:44364/api/spaces/1/messages/1`
+
+whereas: 
+`curl -i -u admin:Admin.1234 https://localhost:44364/api/spaces/1/messages/1`
+
+Add member:
+`curl -i -X POST -u admin:Admin.1234 -H "Content-Type: application/json" -d "{\"userId\": \"demo\", \"perms\":\"r\", \"spaceId\": 1}" https://localhost:44364/api/spaces/1/members`

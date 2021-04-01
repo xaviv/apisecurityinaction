@@ -29,18 +29,21 @@ namespace ApiSecurityInAction.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [BasicAuth]
+        //[BasicAuth] // Anybody can register an account, and they won't be authenticated first
         public async Task<ActionResult<IdentityResult>> RegisterUser([FromBody] UserDto user)
 		{
-            return await userManager.CreateAsync(new IdentityUser(user.UserName), user.Password);
+            var userResult = await userManager.CreateAsync(new IdentityUser(user.UserName), user.Password);
+            return CreatedAtAction("RegisterUser", userResult);
 		}
 
+        // Added just for testing purposes. Not found in the book.
         /// <summary>
         /// Returns a user
         /// </summary>
         /// <param name="userName">User name</param>
         /// <returns></returns>
         [HttpGet]
+        [BasicAuth]
         public async Task<ActionResult<UserDto>> GetUser(string userName)
         {
             var user = await userManager.FindByNameAsync(userName);
