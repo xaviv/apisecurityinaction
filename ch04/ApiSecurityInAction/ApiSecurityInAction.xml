@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ApiSecurityInAction</name>
+    </assembly>
+    <members>
+        <member name="M:ApiSecurityInAction.Controllers.SpacesController.CreateSpace(ApiSecurityInAction.ORM.Space)">
+            <summary>
+            Creates a new space
+            </summary>
+            <param name="space"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSecurityInAction.Controllers.SpacesController.ReadMessage(System.Int32,System.Int32)">
+            <summary>
+            Read an specific message
+            </summary>
+            <param name="spaceId">Space identificator</param>
+            <param name="messageId">Message identificator</param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSecurityInAction.Controllers.SpacesController.FindMessages(System.Int32)">
+            <summary>
+            Find messages in last 24h
+            </summary>
+            <param name="spaceId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSecurityInAction.Controllers.SpacesController.GetSpaces">
+            <summary>
+            Return a list of all possible spaces
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSecurityInAction.Controllers.UsersController.RegisterUser(ApiSecurityInAction.ORM.UserDto)">
+            <summary>
+            Create a user
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSecurityInAction.Controllers.UsersController.GetUser(System.String)">
+            <summary>
+            Returns a user
+            </summary>
+            <param name="userName">User name</param>
+            <returns></returns>
+        </member>
+        <member name="P:ApiSecurityInAction.ORM.Space.SpaceId">
+            <summary>
+            Id of new space
+            </summary>
+        </member>
+        <member name="P:ApiSecurityInAction.ORM.Space.Name">
+            <summary>
+            Space name
+            </summary>
+        </member>
+        <member name="P:ApiSecurityInAction.ORM.Space.Owner">
+            <summary>
+            Owner username
+            </summary>
+        </member>
+    </members>
+</doc>
