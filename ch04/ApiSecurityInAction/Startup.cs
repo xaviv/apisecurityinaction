@@ -63,6 +63,17 @@ namespace ApiSecurityInAction
 
 			services.AddTransient<UserValidatorService>();
 
+			// Add session for token-based authentication
+			services.AddDistributedMemoryCache(); // It is used as a backing store for session (see: https://docs.microsoft.com/en-us/aspnet/core/performance/caching/distributed?view=aspnetcore-5.0)
+			services.AddSession(options =>
+			{
+				options.IdleTimeout = TimeSpan.FromMinutes(10);
+				options.Cookie.HttpOnly = true; 
+				options.Cookie.IsEssential = true;
+			});
+
+			services.AddScoped<ITokenStore, CookieTokenStore>();
+
 			services.AddAuthentication().AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", options => { });
 
 			services.AddAuthorization(options =>
@@ -106,6 +117,9 @@ namespace ApiSecurityInAction
 			app.UseAuthentication();
 
 			app.UseAuthorization();
+
+			//See TokenStore
+			app.UseSession();
 
 			// Custom middleware to provide audit trail
 			app.UseMiddleware<AuditMiddleware>();
